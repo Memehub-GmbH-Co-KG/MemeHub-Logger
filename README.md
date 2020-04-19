@@ -16,11 +16,11 @@ The following logging targets are available:
  - `console`: Prints logs to the console / output stream.
    Availalbe options:
    - `timestamp`: A formatting for the timestamp. [moment.js `format` is used](https://momentjs.com/docs/#/displaying/format/).
-   - `indentation`: Changes how logs are indented before printing.
-     - `head`: A string to put before the title, but after the timestamp.
-     - `data`: A string to put before each line of detail data.
-
- - `RRB_QUEUE_LOG`: The queue to save logs
- - `RRB_QUEUE_GET`: The queue to get logs
- - `RRB_PREFIX`: The prefix for all messages
- - `BOT_TOKEN`: The bot token used for sending logs to telegram
+   - `indentation`: A string to put before each line of detail data.
+ - `cache`: Stores logs in memeory.
+   Availalbe options:
+   - `size`: The amonut of logs to keep in memory
+   - `name`: The name of the cache. Having multiple caches with the same name results in undefined behavior.
+ - `telegram`: Sends logs to a telegram group.
+   Availalbe options;
+   - `token`: The telegram bot token to use.

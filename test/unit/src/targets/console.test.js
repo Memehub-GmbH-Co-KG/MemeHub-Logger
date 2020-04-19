@@ -1,7 +1,5 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const yaml = require('js-yaml');
-const fs = require('fs');
 const moment = require('moment');
 
 const consoleTarget = require('../../../../src/targets/console');

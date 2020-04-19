@@ -6,7 +6,7 @@ const { serializeError } = require('serialize-error');
  * Config:
  * 
  * indentation: String to put before each line of datail data
- * timestamp: A formatting string for the timestamp. [Moment js `format`](https://momentjs.com/docs/#/displaying/format/) is used
+ * timestamp: A formatting string for the timestamp. [Moment js `format`](https://momentjs.com/docs/#/displaying/format/) is used.
  * @param {*} config 
  */
 
