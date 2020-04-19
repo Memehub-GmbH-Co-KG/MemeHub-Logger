@@ -1,7 +1,7 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const { Publisher, Defaults } = require('redis-request-broker');
-const { start } = require('../../src/save-log');
+const { start } = require('../../../src/save-log');
 const yaml = require('js-yaml');
 const fs = require('fs');
 const sleep = require('util').promisify(setTimeout);
