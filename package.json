@@ -4,7 +4,7 @@
   "description": "Logging for memehub",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -c test/unit/"
   },
   "repository": {
     "type": "git",
@@ -13,6 +13,16 @@
   "author": "bert",
   "license": "ISC",
   "dependencies": {
-    "redis-request-broker": "^1.4.1"
+    "docker-names": "^1.1.1",
+    "dotenv": "^8.2.0",
+    "js-yaml": "^3.13.1",
+    "moment": "^2.24.0",
+    "redis-request-broker": "^1.4.1",
+    "serialize-error": "^6.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^7.1.1"
   }
 }
