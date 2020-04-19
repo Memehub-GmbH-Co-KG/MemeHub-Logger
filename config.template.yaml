@@ -1,0 +1,40 @@
+
+# Settings regarding the redis-request-broker
+rrb:
+  queues:
+    log: log # Will listen to this queue for saving logs
+    get: get # Will listen to this queue for requesting logs
+  prefix: logging
+  db: memehub
+
+# logging targets
+# Following targets are available: console, mongodb, file, telegram.
+# If you want to enable log retreival you should include a mongodb target.
+# More info about the configuration options for each target in the readme.
+targets: 
+  - type: console
+    enabled: true
+    level: info
+  - type: mongodb
+    enabled: true
+    level: info
+  - type: file 
+    enabled: true
+    level: info
+    path: logs
+    format: Y-MM-DD
+    extension: log
+  - type: telegram
+    enabled: true
+    level: warning
+    botToken: 123abc
+    chats:
+      - 123
+
+# Settings regarding the formatting of the log messages
+formatting:
+  indentation:
+    head: " ",
+    data: "   ] "
+    data_inner: "  "
+  timestamp: HH:mm:ss.SSS # moment js formatting

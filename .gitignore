@@ -1,3 +1,4 @@
 node_modules
 .vscode
-config.template.yaml
+config.yaml
+config.test.yaml
