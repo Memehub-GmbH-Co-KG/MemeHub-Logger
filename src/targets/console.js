@@ -23,7 +23,7 @@ async function build(config) {
     return {
         log: async function(time, level, component, instance, title, data) {
             const timestamp = time.format(config.timestamp);
-            console.log(`${timestamp} [${component}][${instance}][${names[level]}]: ${title}`);
+            console.log(`${timestamp} [${component}][${instance}][${level}]: ${title}`);
             if (data) console.log(`${indented(readable(data))}`);
         },
 
@@ -37,9 +37,10 @@ async function build(config) {
     }
 
     function readable(data) {
-        if (typeof data === 'string') return data;
         if (data instanceof Error) data = serializeError(data);
         return JSON.stringify(data, null, '  ');
     }
 
 }
+
+module.exports.build = build;

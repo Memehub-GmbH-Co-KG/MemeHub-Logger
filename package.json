@@ -4,7 +4,7 @@
   "description": "Logging for memehub",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -c test/unit/*/*.test.js"
+    "test": "mocha -c \"test/unit/**/*.test.js\""
   },
   "repository": {
     "type": "git",
