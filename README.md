@@ -28,6 +28,6 @@ The following logging targets are available:
    - `timestamp`: A formatting string for the timestamp. [moment.js `format` is used](https://momentjs.com/docs/#/displaying/format/).
  - `mongodb`: Stores Logs in a mongo db.
    Available options:
-  - `connection`: The mongo db connection string.
-  - `database`: The database to use.
-  - `collection`: The collection to use.
+   - `connection`: The mongo db connection string.
+   - `database`: The database to use.
+   - `collection`: The collection to use.
