@@ -7,7 +7,6 @@ const targets = {
     console: require('./src/targets/console'),
     cache: require('./src/targets/cache'),
     mongodb: require('./src/targets/mongodb'),
-    file: require('./src/targets/file'),
     telegram: require('./src/targets/telegram')
 }
 

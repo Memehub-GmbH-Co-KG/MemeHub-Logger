@@ -15,12 +15,19 @@ The following logging targets are available:
 
  - `console`: Prints logs to the console / output stream.
    Availalbe options:
-   - `timestamp`: A formatting for the timestamp. [moment.js `format` is used](https://momentjs.com/docs/#/displaying/format/).
+   - `timestamp`: A formatting string for the timestamp. [moment.js `format` is used](https://momentjs.com/docs/#/displaying/format/).
    - `indentation`: A string to put before each line of detail data.
  - `cache`: Stores logs in memeory.
    Availalbe options:
    - `size`: The amonut of logs to keep in memory
    - `name`: The name of the cache. Having multiple caches with the same name results in undefined behavior.
- - `telegram`: Sends logs to a telegram group.
+ - `telegram`: Sends logs to telegram groups.
    Availalbe options;
    - `token`: The telegram bot token to use.
+   - `chats`: Chat ids of the telegram chats to send logs to.
+   - `timestamp`: A formatting string for the timestamp. [moment.js `format` is used](https://momentjs.com/docs/#/displaying/format/).
+ - `mongodb`: Stores Logs in a mongo db.
+   Available options:
+  - `connection`: The mongo db connection string.
+  - `database`: The database to use.
+  - `collection`: The collection to use.
