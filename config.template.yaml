@@ -13,30 +13,28 @@ rrb:
 # More info about the configuration options for each target in the readme.
 targets: 
   - type: console
-    enabled: true
+    enabled: false
     level: info
     timestamp: HH:mm:ss.SSS
     indentation: "   ] "
   - type: cache
-    enabled: true
+    enabled: false
     level: debug
     size: 1000
     name: default
   - type: mongodb
-    enabled: true
+    enabled: false
     level: info
-  - type: file
-    enabled: true
-    level: info
-    path: logs
-    format: Y-MM-DD
-    extension: log
+    connection: mongo db connection string
+    database: mongo db database
+    collection: mongo db collection
   - type: telegram
-    enabled: true
+    enabled: false
     level: warning
-    botToken: 123abc
+    token: telegram bot token
     chats:
       - 123
+    timestamp: HH:mm:ss.SSS
 
 # Defines the log levels
 levels:
