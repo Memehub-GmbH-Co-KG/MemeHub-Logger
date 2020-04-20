@@ -32,12 +32,12 @@ async function build(config) {
         log: async function(time, level, component, instance, title, data) {
             // Wrap in try catch as we dont really mind if it does not work
             try {
-                let message = `_${time.format(config.timestamp)} / ${escape(component)} @ ${escape(instance)}_\n*${level}:* ${escape(title)}`;
+                let message = `_${escape(time.format(config.timestamp))} · __${escape(component)}__ ${escape(instance)}_\n*${level}:* ${escape(title)}`;
                 if (data)
                     message = `${message}\n\`${escape(readable(data))}\``;
 
                 for (id of config.chats)
-                    await bot.telegram.sendMessage(id, message, { parse_mode: 'Markdown' });
+                    await bot.telegram.sendMessage(id, message, { parse_mode: 'MarkdownV2' });
             }
             catch (error) {
                 console.error('Failed to send log to telegram', error);
@@ -49,8 +49,35 @@ async function build(config) {
         }
     }
 
+    /**
+     * Escapes an input string to work with markdown.
+     * See [the docs](https://core.telegram.org/bots/api#markdownv2-style).
+     * @param {string} text The text to escape.
+     */
     function escape(text) {
-        return text.replace("_", "\\_").replace("*", "\\*").replace("`", "\\`");
+        const escapeCharacters = [
+            [ /\_/g, '\\_' ],
+            [ /\*/g, '\\*' ],
+            [ /\[/g, '\\[' ],
+            [ /\]/g, '\\]' ],
+            [ /\(/g, '\\(' ],
+            [ /\)/g, '\\)' ],
+            [ /\~/g, '\\~' ],
+            [ /\`/g, '\\`' ],
+            [ /\>/g, '\\>' ],
+            [ /\#/g, '\\#' ],
+            [ /\+/g, '\\+' ],
+            [ /\-/g, '\\-' ],
+            [ /\=/g, '\\=' ],
+            [ /\|/g, '\\|' ],
+            [ /\{/g, '\\{' ],
+            [ /\}/g, '\\}' ],
+            [ /\./g, '\\.' ],
+            [ /\!/g, '\\!' ]
+        ];
+        for (const char of escapeCharacters)
+            text = text.replace(char[0], char[1]);
+        return text;
     }
 
     function readable(data) {
