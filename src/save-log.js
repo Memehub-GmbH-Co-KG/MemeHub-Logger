@@ -104,7 +104,8 @@ async function start(queue, targets, levels, targetErrorTimeout) {
     return {
         stop: async function() {
             await subscriber.stop();
-        }
+        },
+        sendLog
     }
 }
 

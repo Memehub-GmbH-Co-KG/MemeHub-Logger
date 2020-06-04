@@ -1,4 +1,4 @@
-const { serializeError } = require('serialize-error'); 
+const { serializeError } = require('serialize-error');
 const Telegraf = require('telegraf')
 
 /**
@@ -6,7 +6,7 @@ const Telegraf = require('telegraf')
  * 
  * Config:
  * 
- * token: The amount of logs to keep in the cache.
+ * token: The telegram bot token that is used to send the log message.
  * chats: An array of group ids to which the log messages should be send to.
  * timestamp: A formatting string for the timestamp. [Moment js `format`](https://momentjs.com/docs/#/displaying/format/) is used.
  * 
@@ -29,7 +29,7 @@ async function build(config) {
 
     // Build the logging target
     return {
-        log: async function(time, level, component, instance, title, data) {
+        log: async function (time, level, component, instance, title, data) {
             // Wrap in try catch as we dont really mind if it does not work
             try {
                 let message = `_${escape(time.format(config.timestamp))} · __${escape(component)}__ ${escape(instance)}_\n*${level}:* ${escape(title)}`;
@@ -44,7 +44,7 @@ async function build(config) {
             }
         },
 
-        stop: async function() {
+        stop: async function () {
             // Nothing
         }
     }
@@ -56,24 +56,24 @@ async function build(config) {
      */
     function escape(text) {
         const escapeCharacters = [
-            [ /\_/g, '\\_' ],
-            [ /\*/g, '\\*' ],
-            [ /\[/g, '\\[' ],
-            [ /\]/g, '\\]' ],
-            [ /\(/g, '\\(' ],
-            [ /\)/g, '\\)' ],
-            [ /\~/g, '\\~' ],
-            [ /\`/g, '\\`' ],
-            [ /\>/g, '\\>' ],
-            [ /\#/g, '\\#' ],
-            [ /\+/g, '\\+' ],
-            [ /\-/g, '\\-' ],
-            [ /\=/g, '\\=' ],
-            [ /\|/g, '\\|' ],
-            [ /\{/g, '\\{' ],
-            [ /\}/g, '\\}' ],
-            [ /\./g, '\\.' ],
-            [ /\!/g, '\\!' ]
+            [/\_/g, '\\_'],
+            [/\*/g, '\\*'],
+            [/\[/g, '\\['],
+            [/\]/g, '\\]'],
+            [/\(/g, '\\('],
+            [/\)/g, '\\)'],
+            [/\~/g, '\\~'],
+            [/\`/g, '\\`'],
+            [/\>/g, '\\>'],
+            [/\#/g, '\\#'],
+            [/\+/g, '\\+'],
+            [/\-/g, '\\-'],
+            [/\=/g, '\\='],
+            [/\|/g, '\\|'],
+            [/\{/g, '\\{'],
+            [/\}/g, '\\}'],
+            [/\./g, '\\.'],
+            [/\!/g, '\\!']
         ];
         for (const char of escapeCharacters)
             text = text.replace(char[0], char[1]);

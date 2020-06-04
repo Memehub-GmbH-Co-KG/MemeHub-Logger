@@ -1,7 +1,9 @@
 const { Defaults } = require('redis-request-broker');
 const saveLogs = require('./src/save-log');
+const instance = require('./src/instance');
 const yaml = require('js-yaml');
 const fs = require('fs');
+const moment = require('moment');
 
 const targets = {
     console: require('./src/targets/console'),
@@ -52,7 +54,8 @@ async function init() {
         }
     }
 
-    saveLogs.start(config.rrb.queues.log, activeTargets, config.levels, config.targetErrorTimeout);
+    const logs = await saveLogs.start(config.rrb.queues.log, activeTargets, config.levels, config.targetErrorTimeout);
+    logs.sendLog(moment(), 'info', instance.component, instance.instance, 'Startup complete', {});
 }
 
 init();
