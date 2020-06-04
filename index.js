@@ -12,7 +12,16 @@ const targets = {
     telegram: require('./src/targets/telegram')
 }
 
+let activeTargets = [];
+let logs = {};
+let shuttingDown = false;
+
 async function init() {
+    // Check if running
+    if (activeTargets.length > 0 || logs.sendLog)
+        await stop();
+
+    console.log('Starting up...');
 
     // Read config on startup
     let config;
@@ -24,12 +33,12 @@ async function init() {
     }
 
     // Set rrb defaults
-    Defaults.setDefaults({ 
+    Defaults.setDefaults({
         redis: config.rrb.redis
     });
 
     // Initialize logging targets
-    const activeTargets = [];
+    activeTargets = [];
     for (const targetConfig of config.targets) {
         if (!targetConfig.enabled)
             continue;
@@ -39,24 +48,69 @@ async function init() {
 
             if (typeof level !== 'number')
                 throw new Error(`Invlaid log level: ${targetConfig.level}`);
-            
+
             const target = await targets[targetConfig.type].build(targetConfig || {});
             target.level = level;
 
             activeTargets.push(target);
         }
-        catch(error) {
-            for (const t of activeTargets)
-                await t.stop();
+        catch (error) {
 
-            console.error('Failed to initialize all logging targets: ' + error.message)
+            console.error('Failed to initialize logging target. Aborting init.');
+            console.error(error);
+            console.log('Logging target that caused this error:');
+            console.log(targetConfig);
+
+            await stop();
             throw error;
         }
     }
 
-    const logs = await saveLogs.start(config.rrb.queues.log, activeTargets, config.levels, config.targetErrorTimeout);
-    logs.sendLog(moment(), 'info', instance.component, instance.instance, 'Startup complete', {});
+    logs = await saveLogs.start(config.rrb.queues.log, activeTargets, config.levels, config.targetErrorTimeout);
+    logs.sendLog(moment(), 'info', instance.component, instance.instance, 'Startup complete.');
+    console.log('Startup complete.');
 }
 
-init();
+async function stop() {
+    if (shuttingDown)
+        return;
 
+    shuttingDown = true;
+    console.log('Shutting down...');
+
+    try {
+        if (logs.stop) {
+            await logs.sendLog(moment(), 'info', instance.component, instance.instance, 'Shutting down.');
+            await logs.stop();
+        }
+        logs = {};
+    }
+    catch (error) {
+        console.error(`Failed to stopp logging: ${error.message}`);
+    }
+
+    for (const t of activeTargets) {
+        try {
+            await t.stop();
+        }
+        catch (error) {
+            console.error('Failed to stop logging target.');
+            console.error(error);
+        }
+    }
+    activeTargets = [];
+    shuttingDown = false;
+    console.log('Shutdown complete.');
+}
+
+try {
+    init();
+}
+catch (error) {
+    console.log(`Failed to start: ${error.message}`);
+}
+
+
+process.on('SIGINT', stop);
+//process.on('SIGQUIT', stop);
+//process.on('SIGTERM', stop);

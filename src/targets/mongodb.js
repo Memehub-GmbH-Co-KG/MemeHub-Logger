@@ -27,7 +27,7 @@ async function build(config) {
         throw new Error('Cannot build mongodb logging target: Invalid collection');
 
     // Connect to mongodb
-    const client = new MongoClient(config.connection, { useUnifiedTopology: true });
+    const client = new MongoClient(config.connection, { useUnifiedTopology: true, useNewUrlParser: true });
     const connection = await client.connect();
 
     // Create the collection in case it does not exist yet.
@@ -36,16 +36,16 @@ async function build(config) {
 
     // Build the logging target
     return {
-        log: async function(time, level, component, instance, title, data) {
+        log: async function (time, level, component, instance, title, data) {
             try {
-                await collection.insertOne({ time: time.toDate(), level, component, instance, title, data});
+                await collection.insertOne({ time: time.toDate(), level, component, instance, title, data });
             }
             catch (error) {
                 console.error('Cannot insert log into mongodb:', error);
             }
         },
 
-        stop: async function() {
+        stop: async function () {
             try {
                 await connection.close();
             }
