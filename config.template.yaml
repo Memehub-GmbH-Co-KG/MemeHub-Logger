@@ -5,7 +5,7 @@ rrb:
     log: log # Will listen to this queue for saving logs
     get: get # Will listen to this queue for requesting logs
   redis:
-    prefix: logging
+    prefix: "mh:logging:"
     port: 6379
 
 # logging targets

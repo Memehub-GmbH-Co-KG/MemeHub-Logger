@@ -13,7 +13,7 @@ const targets = {
 }
 
 let activeTargets = [];
-let logs = {};
+let logs = { sendLog: () => { } };
 let shuttingDown = false;
 
 async function init() {
@@ -34,7 +34,16 @@ async function init() {
 
     // Set rrb defaults
     Defaults.setDefaults({
-        redis: config.rrb.redis
+        redis: config.rrb.redis,
+        logger: (level, message, time, component, instance, scope) =>
+            logs.sendLog(moment(time), level, instnace.component, instance.instance, message, { rrbComponent: component, rrbScope: scope }),
+        levels: {
+            error: config.levels.mapping['error'],
+            warning: config.levels.mapping['warning'],
+            notice: config.levels.mapping['notice'],
+            info: config.levels.mapping['info'],
+            debug: config.levels.mapping['debug']
+        }
     });
 
     // Initialize logging targets
@@ -83,7 +92,7 @@ async function stop() {
             await logs.sendLog(moment(), 'info', instance.component, instance.instance, 'Shutting down.');
             await logs.stop();
         }
-        logs = {};
+        logs = { sendLog: () => { } };
     }
     catch (error) {
         console.error(`Failed to stopp logging: ${error.message}`);
