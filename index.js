@@ -103,14 +103,9 @@ async function stop() {
     console.log('Shutdown complete.');
 }
 
-try {
-    init();
-}
-catch (error) {
-    console.log(`Failed to start: ${error.message}`);
-}
 
+init().catch(error => console.log(`Failed to start: ${error.message}`));
 
 process.on('SIGINT', stop);
-//process.on('SIGQUIT', stop);
-//process.on('SIGTERM', stop);
+process.on('SIGQUIT', stop);
+process.on('SIGTERM', stop);
