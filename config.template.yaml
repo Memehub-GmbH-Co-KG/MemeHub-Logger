@@ -1,9 +1,8 @@
 
 # Settings regarding the redis-request-broker
 rrb:
-  queues:
-    log: logging:log # Will listen to this queue for saving logs
-    get: logging:get # Will listen to this queue for requesting logs
+  logChannel: logging:log # Will listen to this channel for saving logs
+  getQueue: logging:get # Will listen to this queue for requesting logs
   redis:
     prefix: "mh:"
     port: 6379
