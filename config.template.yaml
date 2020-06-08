@@ -4,8 +4,9 @@ rrb:
   logChannel: logging:log # Will listen to this channel for saving logs
   getQueue: logging:get # Will listen to this queue for requesting logs
   redis:
-    prefix: "mh:"
+    prefix: "mh:test:"
     port: 6379
+    host: 127.0.0.1
 
 # logging targets
 # Following targets are available: console, mongodb, cache, telegram.
