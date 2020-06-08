@@ -19,7 +19,7 @@
     "js-yaml": "^3.14.0",
     "moment": "^2.26.0",
     "mongodb": "^3.5.8",
-    "redis-request-broker": "^1.9.2",
+    "redis-request-broker": "^1.11.1",
     "serialize-error": "^7.0.1",
     "telegraf": "^3.38.0"
   },

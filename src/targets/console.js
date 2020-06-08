@@ -21,13 +21,13 @@ async function build(config) {
 
     // Build the logging target
     return {
-        log: async function(time, level, component, instance, title, data) {
+        log: async function (time, level, component, instance, title, data) {
             const timestamp = time.format(config.timestamp);
-            console.log(`${timestamp} [${component}][${instance}][${level}]: ${title}`);
+            console.log(`${timestamp} [${level}][${component}][${instance}]: ${title}`);
             if (data) console.log(`${indented(readable(data))}`);
         },
 
-        stop: async function() {
+        stop: async function () {
             // Nothing
         }
     }

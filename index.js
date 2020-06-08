@@ -34,16 +34,7 @@ async function init() {
 
     // Set rrb defaults
     Defaults.setDefaults({
-        redis: config.rrb.redis,
-        logger: (level, message, time, component, instance, scope) =>
-            logs.sendLog(moment(time), level, instnace.component, instance.instance, message, { rrbComponent: component, rrbScope: scope }),
-        levels: {
-            error: config.levels.mapping['error'],
-            warning: config.levels.mapping['warning'],
-            notice: config.levels.mapping['notice'],
-            info: config.levels.mapping['info'],
-            debug: config.levels.mapping['debug']
-        }
+        redis: config.rrb.redis
     });
 
     // Initialize logging targets
@@ -75,8 +66,9 @@ async function init() {
         }
     }
 
-    logs = await saveLogs.start(config.rrb.queues.log, activeTargets, config.levels, config.targetErrorTimeout);
-    logs.sendLog(moment(), 'info', instance.component, instance.instance, 'Startup complete.');
+
+    logs = await saveLogs.start(config.rrb.logChannel, activeTargets, config.levels, config.targetErrorTimeout);
+    logs.sendLog(moment(), 'notice', instance.component, instance.instance, 'Startup complete.');
     console.log('Startup complete.');
 }
 
@@ -89,7 +81,7 @@ async function stop() {
 
     try {
         if (logs.stop) {
-            await logs.sendLog(moment(), 'info', instance.component, instance.instance, 'Shutting down.');
+            await logs.sendLog(moment(), 'notice', instance.component, instance.instance, 'Shutting down.');
             await logs.stop();
         }
         logs = { sendLog: () => { } };
@@ -113,7 +105,10 @@ async function stop() {
 }
 
 
-init().catch(error => console.log(`Failed to start: ${error.message}`));
+init().catch(error => {
+    console.log(`Failed to start: ${error.message}`);
+    stop();
+});
 
 process.on('SIGINT', stop);
 process.on('SIGQUIT', stop);

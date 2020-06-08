@@ -47,7 +47,7 @@ async function start(queue, targets, levels, targetErrorTimeout) {
         }
         catch (error) {
             console.log(error);
-            await sendLog(moment(), levels.internal.onUnknownLevel, LoggerComponent, LoggerInstance, 'Invalid log request', { error, log });
+            await sendLog(moment(), levels.internal.onInvalidLog, LoggerComponent, LoggerInstance, 'Invalid log request', { error: serializeError(error), log });
             throw error; // Pass the error to the client
         }
 
