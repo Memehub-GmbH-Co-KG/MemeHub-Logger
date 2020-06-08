@@ -31,3 +31,9 @@ The following logging targets are available:
    - `connection`: The mongo db connection string.
    - `database`: The database to use.
    - `collection`: The collection to use.
+
+# Testing
+
+You will need to create a `config.test.yaml`. Make sure to set all important settings like connection strings and such. Also, make sure to change databases and such so that live data does not get deleted!
+
+Run the tests with `npm run test`.
