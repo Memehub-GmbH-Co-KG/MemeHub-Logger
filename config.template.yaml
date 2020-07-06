@@ -68,3 +68,17 @@ levels:
 
 # The time a logging target should remain inactive when it fails in ms
 targetErrorTimeout: 300_000
+
+events:
+  logEvents: false
+  level: info
+  prefix: events
+  channels: [
+    contest-created,
+    contest-deleted,
+    contest-started,
+    contest-stopped,
+    post,
+    vote,
+    retract-vote
+  ]

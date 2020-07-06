@@ -4,6 +4,7 @@ const instance = require('./src/instance');
 const yaml = require('js-yaml');
 const fs = require('fs');
 const moment = require('moment');
+const _eventLogger = require('./src/event-logger');
 
 const targets = {
     console: require('./src/targets/console'),
@@ -14,6 +15,7 @@ const targets = {
 
 let activeTargets = [];
 let logs = { sendLog: () => { } };
+let eventLogger = undefined;
 let shuttingDown = false;
 
 async function init() {
@@ -66,8 +68,12 @@ async function init() {
         }
     }
 
-
     logs = await saveLogs.start(config.rrb.logChannel, activeTargets, config.levels, config.targetErrorTimeout);
+
+    // Event logging
+    if (config.events && config.events.logEvents)
+        eventLogger = await _eventLogger.build(config.events, logs.sendLog);
+
     logs.sendLog(moment(), 'notice', instance.component, instance.instance, 'Startup complete.');
     console.log('Startup complete.');
 }
@@ -78,6 +84,9 @@ async function stop() {
 
     shuttingDown = true;
     console.log('Shutting down...');
+
+    eventLogger && await eventLogger.stop()
+        .catch(e => sendLog(moment(), 'warning', instance.component, instance.instance, 'Faield to stop event logger', e));
 
     try {
         if (logs.stop) {
@@ -107,6 +116,7 @@ async function stop() {
 
 init().catch(error => {
     console.log(`Failed to start: ${error.message}`);
+    console.log(error);
     stop();
 });
 
