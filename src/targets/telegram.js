@@ -26,26 +26,46 @@ async function build(config) {
         config.timestamp = 'DD.MM.YYYY HH:mm:ss';
 
     const bot = new Telegraf(config.token);
+    const logQueue = [];
+    const timeoutWaitingToLog = undefined;
 
     // Build the logging target
     return {
         log: async function (time, level, component, instance, title, data) {
-            // Wrap in try catch as we dont really mind if it does not work
-            try {
-                let message = `_${escape(time.format(config.timestamp))} · __${escape(component)}__ ${escape(instance)}_\n*${level}:* ${escape(title)}`;
-                if (data)
-                    message = `${message}\n\`${escape(readable(data))}\``;
-
-                for (id of config.chats)
-                    await bot.telegram.sendMessage(id, message, { parse_mode: 'MarkdownV2' });
-            }
-            catch (error) {
-                console.error('Failed to send log to telegram', error);
-            }
+            await sendLog({ time, level, component, instance, title, data });
         },
 
         stop: async function () {
-            // Nothing
+            if (!timeoutWaitingToLog)
+                return;
+
+            // Warn about logs in logQueue
+            clearTimeout(timeoutWaitingToLog);
+            console.warn("Stopped while waiting to send telegram logs. The following logs will not be sent:");
+            for (const log of logQueue)
+                console.log(log);
+        }
+    }
+
+    function sendLog(log) {
+        try {
+            // Dont send log now if we are pausing the logging right now
+            if (timeoutWaitingToLog)
+                return logQueue.push(log);
+
+            let message = `_${escape(log.time.format(config.timestamp))} · __${escape(log.component)}__ ${escape(log.instance)}_\n*${log.level}:* ${escape(log.title)}`;
+            if (log.data)
+                message = `${message}\n\`${escape(readable(log.data))}\``;
+
+            for (id of config.chats)
+                await bot.telegram.sendMessage(id, message, { parse_mode: 'MarkdownV2' });
+        }
+        catch (error) {
+            // Check, for too many requests error
+            if (error && error.code === 429)
+                return onTooMAnyRequests(error, log);
+
+            console.error('Failed to send log to telegram', error);
         }
     }
 
@@ -83,6 +103,37 @@ async function build(config) {
     function readable(data) {
         if (data instanceof Error) data = serializeError(data);
         return JSON.stringify(data, null, '  ');
+    }
+
+    function onTooMAnyRequests(error, log) {
+        try {
+            logQueue.push(log);
+
+            // Just queue the log, if there is an timeout
+            if (timeoutWaitingToLog)
+                return;
+
+            // Get time to wait
+            const time = error.parameters && error.parameters.retry_after
+                ? error.parameters.retry_after
+                : 60;
+
+            timeoutWaitingToLog = setTimeout(emptyLogQueue, time * 1000);
+        }
+        catch (error) {
+            console.error("Failed to handle too many requests error:", error);
+        }
+    }
+
+    async function emptyLogQueue() {
+        try {
+            timeoutWaitingToLog = undefined;
+            while (logQueue.length > 0)
+                await sendLog(logQueue.shift());
+        }
+        catch (error) {
+            console.error("Failed to empty log queue:", error);
+        }
     }
 }
 
