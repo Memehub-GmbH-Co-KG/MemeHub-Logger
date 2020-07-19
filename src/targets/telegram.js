@@ -47,7 +47,7 @@ async function build(config) {
         }
     }
 
-    function sendLog(log) {
+    async function sendLog(log) {
         try {
             // Dont send log now if we are pausing the logging right now
             if (timeoutWaitingToLog)
