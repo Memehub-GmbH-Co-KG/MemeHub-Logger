@@ -1,4 +1,4 @@
-const { Defaults } = require('redis-request-broker');
+const { Defaults, Client } = require('redis-request-broker');
 const saveLogs = require('./src/save-log');
 const instance = require('./src/instance');
 const yaml = require('js-yaml');
@@ -25,19 +25,24 @@ async function init() {
 
     console.log('Starting up...');
 
+    // Set rrb defaults
+    Defaults.setDefaults({
+        redis: {
+            port: 6379,
+            host: "mhredis",
+            prefix: "mh:"
+        }
+    });
+
     // Read config on startup
     let config;
     try {
-        config = yaml.safeLoad(fs.readFileSync('config.yaml', 'utf8'));
+        config = await getConfig();
     } catch (e) {
-        console.error('Error: Cannot load config file. Exiting.');
+        console.error('Error: Cannot load config. Errror:');
+        console.error(e);
         process.exit(1);
     }
-
-    // Set rrb defaults
-    Defaults.setDefaults({
-        redis: config.rrb.redis
-    });
 
     // Initialize logging targets
     activeTargets = [];
@@ -68,7 +73,7 @@ async function init() {
         }
     }
 
-    logs = await saveLogs.start(config.rrb.logChannel, activeTargets, config.levels, config.targetErrorTimeout);
+    logs = await saveLogs.start(config.channels.log, activeTargets, config.levels, config.targetErrorTimeout);
 
     // Event logging
     if (config.events && config.events.logEvents)
@@ -113,6 +118,14 @@ async function stop() {
     console.log('Shutdown complete.');
 }
 
+async function getConfig() {
+    const client = new Client('config:get', { timeout: 10000 });
+    await client.connect();
+    const [channels, config] = await client.request(['rrb.channels.logging', 'logging']);
+    config.channels = channels;
+    await client.disconnect();
+    return config;
+}
 
 init().catch(error => {
     console.log(`Failed to start: ${error.message}`);
