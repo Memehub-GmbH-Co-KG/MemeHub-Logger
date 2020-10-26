@@ -82,7 +82,6 @@ async function init() {
         eventLogger = await _eventLogger.build(config.events, logs.sendLog);
 
     logs.sendLog(moment(), 'notice', instance.component, instance.instance, 'Startup complete.');
-    console.log('Startup complete.');
 }
 
 async function stop() {
