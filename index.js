@@ -14,14 +14,16 @@ const targets = {
 }
 
 let activeTargets = [];
-let logs = { sendLog: () => { } };
+let logs = { sendLog: () => { }, uninitialized: true };
 let eventLogger = undefined;
 let shuttingDown = false;
 
 async function init() {
     // Check if running
-    if (activeTargets.length > 0 || logs.sendLog)
+    if (activeTargets.length > 0 || !logs.uninitialized) {
+        console.log('Shutting down before init because it looks like we are running.');
         await stop();
+    }
 
     console.log('Starting up...');
 
