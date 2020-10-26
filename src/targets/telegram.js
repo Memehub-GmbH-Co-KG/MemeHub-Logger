@@ -13,7 +13,7 @@ const Telegraf = require('telegraf')
  * @param {*} config 
  */
 
-async function build(config) {
+async function build(config, full_config) {
 
     // Validate config and set defaults
     if (typeof config.token !== 'string')
@@ -25,7 +25,7 @@ async function build(config) {
     if (typeof config.timestamp !== 'string')
         config.timestamp = 'DD.MM.YYYY HH:mm:ss';
 
-    const bot = new Telegraf(config.token);
+    const bot = new Telegraf(full_config.bot_token);
     const logQueue = [];
     const timeoutWaitingToLog = undefined;
 

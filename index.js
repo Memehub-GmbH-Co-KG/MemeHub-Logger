@@ -56,7 +56,7 @@ async function init() {
             if (typeof level !== 'number')
                 throw new Error(`Invlaid log level: ${targetConfig.level}`);
 
-            const target = await targets[targetConfig.type].build(targetConfig || {});
+            const target = await targets[targetConfig.type].build(targetConfig || {}, config);
             target.level = level;
 
             activeTargets.push(target);
