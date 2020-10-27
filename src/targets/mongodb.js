@@ -4,35 +4,33 @@ const MongoClient = require('mongodb').MongoClient;
  * Stores logs in a mongodb.
  * This can be used for log retrival.
  * 
- * Config:
+ * Uses the base config mongo db settings.
  * 
- * connection: The mongodb connection string
- * database: The database to use
- * collection: The collection to store the logs in.
- * 
- * 
- * @param {*} config 
+ * @param {any} _ Target config not used
+ * @param {object} full_config The full memehub bot config
  */
 
-async function build(config) {
+async function build(_, full_config) {
 
     // Validate config and set defaults
-    if (typeof config.connection !== 'string')
+    if (typeof full_config.mongodb.connection !== 'string')
         throw new Error('Cannot build mongodb logging target: Invalid connection string');
 
-    if (typeof config.database !== 'string')
+    if (typeof full_config.mongodb.database !== 'string')
         throw new Error('Cannot build mongodb logging target: Invalid database');
 
-    if (typeof config.collection !== 'string')
+    if (typeof full_config.mongodb.collections.logs !== 'string')
         throw new Error('Cannot build mongodb logging target: Invalid collection');
 
     // Connect to mongodb
-    const client = new MongoClient(config.connection, { useUnifiedTopology: true, useNewUrlParser: true });
+    const client = new MongoClient(full_config.mongodb.connection, { useUnifiedTopology: true, useNewUrlParser: true });
     const connection = await client.connect();
 
     // Create the collection in case it does not exist yet.
-    const database = client.db(config.database);
-    const collection = await database.createCollection(config.collection);
+    const database = client.db(full_config.mongodb.database);
+    const collection = await database.createCollection(full_config.mongodb.collections.logs, {});
+
+    console.log('mdb init');
 
     // Build the logging target
     return {
