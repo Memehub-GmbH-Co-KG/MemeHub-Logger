@@ -48,12 +48,12 @@ async function init() {
 
     // Initialize logging targets
     activeTargets = [];
-    for (const targetConfig of config.targets) {
+    for (const targetConfig of config.logging.targets) {
         if (!targetConfig.enabled)
             continue;
 
         try {
-            const level = config.levels.hierarchy[targetConfig.level];
+            const level = config.logging.levels.hierarchy[targetConfig.level];
 
             if (typeof level !== 'number')
                 throw new Error(`Invlaid log level: ${targetConfig.level}`);
@@ -75,11 +75,11 @@ async function init() {
         }
     }
 
-    logs = await saveLogs.start(config.channels.log, activeTargets, config.levels, config.targetErrorTimeout);
+    logs = await saveLogs.start(config.rrb.channels.logging.log, activeTargets, config.logging.levels, config.logging.targetErrorTimeout);
 
     // Event logging
-    if (config.events && config.events.logEvents)
-        eventLogger = await _eventLogger.build(config.events, logs.sendLog);
+    if (config.logging.events && config.logging.events.logEvents)
+        eventLogger = await _eventLogger.build(config.logging.events, logs.sendLog);
 
     logs.sendLog(moment(), 'notice', instance.component, instance.instance, 'Startup complete.');
 }
@@ -122,8 +122,7 @@ async function stop() {
 async function getConfig() {
     const client = new Client('config:get', { timeout: 10000 });
     await client.connect();
-    const [channels, config] = await client.request(['rrb.channels.logging', 'logging']);
-    config.channels = channels;
+    const config = await client.request();
     await client.disconnect();
     return config;
 }

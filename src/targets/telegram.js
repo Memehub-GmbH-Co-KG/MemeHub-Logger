@@ -16,7 +16,7 @@ const Telegraf = require('telegraf')
 async function build(config, full_config) {
 
     // Validate config and set defaults
-    if (typeof config.token !== 'string')
+    if (typeof full_config.telegram.bot_token !== 'string')
         throw new Error('Cannot build telegram logging target: Invalid bot token.');
 
     if (!Array.isArray(config.chats) || !config.chats.every(c => typeof c === 'number'))
@@ -25,7 +25,7 @@ async function build(config, full_config) {
     if (typeof config.timestamp !== 'string')
         config.timestamp = 'DD.MM.YYYY HH:mm:ss';
 
-    const bot = new Telegraf(full_config.bot_token);
+    const bot = new Telegraf(full_config.telegram.bot_token);
     const logQueue = [];
     const timeoutWaitingToLog = undefined;
 
