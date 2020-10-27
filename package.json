@@ -1,6 +1,6 @@
 {
   "name": "memehub-logger",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Logging for memehub",
   "main": "index.js",
   "scripts": {
@@ -17,8 +17,8 @@
     "docker-names": "^1.1.1",
     "dotenv": "^8.2.0",
     "js-yaml": "^3.14.0",
-    "moment": "^2.26.0",
-    "mongodb": "^3.5.8",
+    "moment": "^2.29.0",
+    "mongodb": "^3.6.2",
     "redis-request-broker": "^1.11.1",
     "serialize-error": "^7.0.1",
     "telegraf": "^3.38.0"
@@ -26,6 +26,6 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^7.2.0"
+    "mocha": "^8.1.3"
   }
 }
