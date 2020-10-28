@@ -30,8 +30,6 @@ async function build(_, full_config) {
     const database = client.db(full_config.mongodb.database);
     const collection = await database.createCollection(full_config.mongodb.collections.logs, {});
 
-    console.log('mdb init');
-
     // Build the logging target
     return {
         log: async function (time, level, component, instance, title, data) {
