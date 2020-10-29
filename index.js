@@ -1,8 +1,7 @@
-const { Defaults, Client } = require('redis-request-broker');
+const { Defaults, Client, Subscriber } = require('redis-request-broker');
 const saveLogs = require('./src/save-log');
 const instance = require('./src/instance');
-const yaml = require('js-yaml');
-const fs = require('fs');
+const timers = require('timers/promises');
 const moment = require('moment');
 const _eventLogger = require('./src/event-logger');
 
@@ -16,6 +15,7 @@ const targets = {
 let activeTargets = [];
 let logs = { sendLog: () => { }, uninitialized: true };
 let eventLogger = undefined;
+let restart = undefined;
 let shuttingDown = false;
 
 async function init() {
@@ -40,6 +40,10 @@ async function init() {
     let config;
     try {
         config = await getConfig();
+
+        // Trigger restart on config change 
+        restart = new Subscriber(config.rrb.channels.config.changed, restart_after_delay);
+        await restart.listen();
     } catch (e) {
         console.error('Error: Cannot load config. Errror:');
         console.error(e);
@@ -84,12 +88,21 @@ async function init() {
     logs.sendLog(moment(), 'notice', instance.component, instance.instance, 'Startup complete.');
 }
 
+async function restart_after_delay() {
+    // This restart is in order to allow other process that also restart to log while doing so.
+    await timers.setTimeout(5000);
+    await stop().catch(console.error);
+    await init().catch(console.error);
+}
+
 async function stop() {
     if (shuttingDown)
         return;
 
     shuttingDown = true;
     console.log('Shutting down...');
+
+    restart && await restart.stop().catch(() => { /* nom nom*/ });
 
     eventLogger && await eventLogger.stop()
         .catch(e => sendLog(moment(), 'warning', instance.component, instance.instance, 'Faield to stop event logger', e));
