@@ -112,7 +112,7 @@ async function stop() {
             await logs.sendLog(moment(), 'notice', instance.component, instance.instance, 'Shutting down.');
             await logs.stop();
         }
-        logs = { sendLog: () => { } };
+        logs = { sendLog: () => { }, uninitialized: true };
     }
     catch (error) {
         console.error(`Failed to stopp logging: ${error.message}`);
