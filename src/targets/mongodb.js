@@ -28,7 +28,7 @@ async function build(_, full_config) {
 
     // Create the collection in case it does not exist yet.
     const database = client.db(full_config.mongodb.database);
-    const collection = await database.createCollection(full_config.mongodb.collections.logs, {});
+    const collection = await database.getCollection(full_config.mongodb.collections.logs);
 
     // Build the logging target
     return {
