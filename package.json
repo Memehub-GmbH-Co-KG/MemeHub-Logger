@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha -c \"test/unit/**/*.test.js\"",
     "start": "node index.js",
-    "build": "docker build -t memehub-logger ."
+    "build": "docker build -t leifb/memehub-logger ."
   },
   "repository": {
     "type": "git",
